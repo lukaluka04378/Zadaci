@@ -1,0 +1,246 @@
+#include <iostream>
+
+#define NORMALNA_TEMPERATURA 20
+#define KORAK_TEMPERATURE 20
+#define MAX_TEMPERATURA 100
+#define MIN_TEMPERATURA 40
+
+using namespace std;
+
+enum TipPreliva {COKOLADNI, COKOLADNI_SA_SLAGOM};
+
+class Preliv
+{
+private:
+    TipPreliva tip;
+public:
+    Preliv()
+    {
+        tip = COKOLADNI;
+    }
+
+    Preliv(TipPreliva p)
+    {
+        tip = p;
+    }
+
+    bool dodajSlag()
+    {
+        if(tip == COKOLADNI)
+        {
+            tip = COKOLADNI_SA_SLAGOM;
+            return true;
+        }
+        cout << "Nemoguca operacija" << endl;
+        return false;
+    }
+    bool ukloniSlag()
+    {
+        if(tip == COKOLADNI_SA_SLAGOM)
+        {
+            tip = COKOLADNI;
+            return true;
+        }
+        cout << "Nemoguca operacija" << endl;
+        return false;
+    }
+    TipPreliva getPreliv() const
+    {
+        return tip;
+    }
+};
+void ispisiPreliv(const Preliv &p)
+{
+    cout << "------------------------" << endl;
+    cout << "Preliv: ";
+    if(p.getPreliv()==0)
+        cout << "COKOLADNI" << endl;
+    else
+        cout << "COKOLADNI SA SLAGOM" << endl;
+    cout << "------------------------" << endl;
+}
+
+enum KolacStanje {U_PRIPREMI, PECE_SE, ZAGOREO, PRIPREMLJEN};
+
+class Kolac
+{
+private:
+    KolacStanje stanje;
+    int temperatura;
+    Preliv preliv;
+public:
+    Kolac() : preliv()
+    {
+        temperatura = NORMALNA_TEMPERATURA;
+        stanje = U_PRIPREMI;
+        preliv = COKOLADNI;
+    }
+    Kolac(const Kolac &k)
+    {
+        temperatura = k.temperatura;
+        stanje = k.stanje;
+        preliv = k.preliv;
+    }
+    bool staviDaSePece()
+    {
+        if(preliv.getPreliv() == COKOLADNI && stanje == U_PRIPREMI)
+        {
+            stanje = PECE_SE;
+            temperatura += KORAK_TEMPERATURE;
+            return true;
+        }
+        cout << "Nemoguca operacija" << endl;
+        return false;
+    }
+    bool ispeciKolac()
+    {
+        if(stanje == PECE_SE)
+        {
+            stanje == U_PRIPREMI;
+            temperatura = NORMALNA_TEMPERATURA;
+            return true;
+        }
+        cout << "Nemoguca operacija" << endl;
+        return false;
+    }
+    bool zavrsiKolac()
+    {
+        if(stanje == U_PRIPREMI)
+        {
+            stanje = PRIPREMLJEN;
+            return true;
+        }
+        cout << "Nemoguca operacija" << endl;
+        return false;
+    }
+    bool povecajTemperaturu()
+    {
+        if(stanje == PECE_SE)
+        {
+            temperatura += KORAK_TEMPERATURE;
+            if(temperatura > MAX_TEMPERATURA)
+            {
+                stanje = ZAGOREO;
+                temperatura = NORMALNA_TEMPERATURA;
+                return true;
+            }
+            cout << "Nemoguca operacija" << endl;
+            return false;
+        }
+        return false;
+    }
+    bool smanjiTemperaturu()
+    {
+        if(stanje == PECE_SE && temperatura >= MIN_TEMPERATURA)
+        {
+            temperatura -= KORAK_TEMPERATURE;
+            return true;
+        }
+        cout << "Nemoguca operacija" << endl;
+        return false;
+    }
+    bool dodajSlag()
+    {
+        return preliv.dodajSlag();
+    }
+    bool ukloniSlag()
+    {
+        return preliv.ukloniSlag();
+    }
+
+    KolacStanje getStanje()const
+    {
+        return stanje;
+    }
+    int getTemperatura()const
+    {
+        return temperatura;
+    }
+    Preliv getPreliv()const
+    {
+        return preliv;
+    }
+};
+
+void ispisiKolac(const Kolac &k)
+{
+    cout << "------------------------" << endl;
+    cout << "Stanje: ";
+    switch(k.getStanje())
+    {
+    case U_PRIPREMI:
+        cout << "U PRIPREMI" << endl;
+        break;
+    case PECE_SE:
+        cout << "PECE SE" << endl;
+        break;
+    case ZAGOREO:
+        cout << "ZAGOREO" << endl;
+        break;
+    case PRIPREMLJEN:
+        cout << "PRIPREN=MLJEN" << endl;
+        break;
+    }
+    cout << "Temperatura: " << k.getTemperatura() << endl;
+    cout << "Preliv: ";
+    ispisiPreliv(k.getPreliv());
+    cout << "------------------------" << endl;
+}
+
+int meni()
+{
+    int n;
+    cout << "Unesite broj operacije koju zelite:" << endl;
+    cout << "1. Stavi da se pece" << endl;
+    cout << "2. Ispeci" << endl;
+    cout << "3. Zavrsi" << endl;
+    cout << "4. Povecaj temperaturu" << endl;
+    cout << "5. Smanji temperaturu" << endl;
+    cout << "6. Dodaj slag" << endl;
+    cout << "7. Ukloni slag" << endl;
+    cout << "8. Kraj" << endl;
+    cin>>n;
+    return n;
+}
+
+int main()
+{
+    Kolac k;
+    int n;
+    bool a;
+    do
+    {
+        n = meni();
+        switch(n)
+        {
+        case 1:
+            a = k.staviDaSePece();
+            break;
+        case 2:
+            a = k.ispeciKolac();
+            break;
+        case 3:
+            a = k.zavrsiKolac();
+            break;
+        case 4:
+            a = k.povecajTemperaturu();
+            break;
+        case 5:
+            a = k.smanjiTemperaturu();
+            break;
+        case 6:
+            a = k.dodajSlag();
+            break;
+        case 7:
+            a = k.ukloniSlag();
+            break;
+        }
+        if(n > 8 || n < 1)
+            cout << "Nepostojeca funkcija" << endl;
+        if(a = true)
+            ispisiKolac(k);
+    }
+    while(n != 8);
+
+    return 0;
+}
