@@ -1,0 +1,165 @@
+#include <iostream>
+#include <cmath>
+#define PI 3.14159265359
+
+using namespace std;
+
+class Figura
+{
+protected:
+    double a,b;
+public:
+    virtual double Obim() = 0;
+    virtual double Povrsina() = 0;
+};
+
+class Pravougaonik : public Figura
+{
+public:
+    Pravougaonik()
+    {
+        a = 5.00;
+        b = 4.00;
+    }
+    Pravougaonik(double aa, double bb)
+    {
+        if(aa > 0 && bb > 0) {}
+        a = aa;
+        b = bb;
+    }
+    Pravougaonik(const Pravougaonik &p)
+    {
+        a = p.a;
+        b = p.b;
+    }
+
+    double getA()const
+    {
+        return a;
+    }
+    double getB()const
+    {
+        return b;
+    }
+
+    double Obim()
+    {
+        return 2 * (a + b);
+    }
+    double Povrsina()
+    {
+        return a * b;
+    }
+};
+
+class Elipsa : public Figura
+{
+public:
+    Elipsa()
+    {
+        a = 5.00;
+        b = 3.00;
+    }
+    Elipsa(double xx, double yy)
+    {
+        if(a > 0 && b > 0)
+        {
+            a = xx;
+            b = yy;
+        }
+    }
+    Elipsa(const Elipsa &e)
+    {
+        a = e.a;
+        b = e.b;
+    }
+
+    double getA()
+    {
+        return a;
+    }
+    double getB()
+    {
+        return b;
+    }
+    double Obim()
+    {
+        return PI * (3 * (a + b) - sqrt((3 * a + b) * (a + 3 * b)));
+    }
+    double Povrsina()
+    {
+        return PI * a * b;
+    }
+};
+
+class Kvadrat : public Pravougaonik
+{
+public:
+    Kvadrat() : Pravougaonik(3, 3) {}
+    Kvadrat(double a) : Pravougaonik(a, a) {}
+    Kvadrat(const Kvadrat &k) : Pravougaonik(k.a, k.a) {}
+};
+
+class Krug : public Elipsa
+{
+public:
+    Krug() : Elipsa(3, 3) {}
+    Krug(double r) : Elipsa(r, r) {}
+    Krug(const Krug &k) : Elipsa(k.a, k.b) {}
+};
+
+class Oblik
+{
+private:
+    Kvadrat a;
+    Krug b;
+public:
+    Oblik() : a(), b() {}
+    Oblik(double x, double y) : a(x), b(y) {}
+    Oblik(const Oblik &o) : a(o.a), b(o.b) {}
+
+    double Obim()
+    {
+        return a.Obim() + b.Obim();
+    }
+    double Povrsina()
+    {
+        return abs(a.Povrsina() - b.Povrsina());
+    }
+
+};
+
+int main()
+{
+    Pravougaonik p1;
+    Pravougaonik p2(2, 15);
+    Pravougaonik p3(p1);
+    cout<<p1.Obim()<<" "<<p1.Povrsina()<<endl;
+    cout<<p2.Obim()<<" "<<p2.Povrsina()<<endl;
+    cout<<p3.Obim()<<" "<<p3.Povrsina()<<endl;
+    Elipsa e1;
+    Elipsa e2(5, 1);
+    Elipsa e3(e1);
+    cout<<e1.Obim()<<" "<<e1.Povrsina()<<endl;
+    cout<<e2.Obim()<<" "<<e2.Povrsina()<<endl;
+    cout<<e3.Obim()<<" "<<e3.Povrsina()<<endl;
+    Kvadrat k1;
+    Kvadrat k2(9);
+    Kvadrat k3(k1);
+    cout<<k1.Obim()<<" "<<k1.Povrsina()<<endl;
+    cout<<k2.Obim()<<" "<<k2.Povrsina()<<endl;
+    cout<<k3.Obim()<<" "<<k3.Povrsina()<<endl;
+    Krug kr1;
+    Krug kr2(3);
+    Krug kr3(kr1);
+    cout<<kr1.Obim()<<" "<<kr1.Povrsina()<<endl;
+    cout<<kr2.Obim()<<" "<<kr2.Povrsina()<<endl;
+    cout<<kr3.Obim()<<" "<<kr3.Povrsina()<<endl;
+    Oblik o1;
+    Oblik o2(7, 7);
+    Oblik o3(o1);
+    cout<<o1.Obim()<<" "<<o1.Povrsina()<<endl;
+    cout<<o2.Obim()<<" "<<o2.Povrsina()<<endl;
+    cout<<o3.Obim()<<" "<<o3.Povrsina()<<endl;
+    return 0;
+}
