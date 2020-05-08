@@ -1,128 +1,156 @@
 #include <iostream>
+
 #include "dinstring.hpp"
+#include "list.hpp"
+
+enum Vrsta {Medo, Zeko, Kuca, Maca};
 
 using namespace std;
 
-class Tastatura{
+class Igracka
+{
 protected:
-    DinString proizvodjac;
-    int brojTastera;
+    DinString Naziv;
+    DinString OpsegGodina;
 public:
-    void ispis(){
-        cout << proizvodjac << " " << brojTastera;
+    virtual void ispisi() = 0;
+    DinString getNaziv() const
+    {
+        return Naziv;
     }
 };
 
-class GejmerskaTastatura : public Tastatura{
+class PlisanaIgracka : public Igracka
+{
 private:
-    int brojPritisaka;
+    Vrsta vrsta;
 public:
-    GejmerskaTastatura(){
-        brojPritisaka = 0;
-        proizvodjac = "Red Dragon";
-        brojTastera = 104;
+    PlisanaIgracka()
+    {
+        vrsta = Maca;
+        Naziv = "Hello Kitty";
+        OpsegGodina = "2 - 7";
     }
-    GejmerskaTastatura(int a, DinString b, int c){
-        brojPritisaka = a;
-        proizvodjac = b;
-        brojTastera = c;
+    PlisanaIgracka(DinString n, DinString og, Vrsta v)
+    {
+        vrsta = v;
+        Naziv = n;
+        OpsegGodina = og;
     }
-    GejmerskaTastatura(const GejmerskaTastatura &g){
-        brojPritisaka = g.brojPritisaka;
-        proizvodjac = g.proizvodjac;
-        brojTastera = g.brojTastera;
-    }
-
-    ~GejmerskaTastatura(){}
-
-    void ispis(){
-        Tastatura::ispis();
-        cout << " " << brojPritisaka << endl;
-    }
-    void pritisniTaster(){
-        brojPritisaka += 1;
-    }
-    void drziTaster(int sec){
-        brojPritisaka += sec;
+    void ispisi()
+    {
+        cout << "Plisana igracka:" << endl;
+        cout  << "Naziv: " << Naziv << endl;
+        cout <<"Vrsta: ";
+        if(vrsta == Medo)
+            cout << "Medo" << endl;
+        else if(vrsta == Maca)
+            cout << "Maca" << endl;
+        else if(vrsta == Zeko)
+            cout << "Zeko" << endl;
+        else
+            cout << "Kuca" << endl;
+        cout << "Opseg godina: " << OpsegGodina << endl;
     }
 };
 
-class NumerickaTastatura : public Tastatura{
+class Autic : public Igracka
+{
 private:
-    int brojPritisakaBrojeva;
+    bool NaStruju;
 public:
-    NumerickaTastatura(){
-        brojPritisakaBrojeva = 0;
-        proizvodjac = "Logitech";
-        brojTastera = 17;
+    Autic()
+    {
+        Naziv = "Hot Wheels";
+        OpsegGodina = "3 - 8";
+        NaStruju = false;
     }
-    NumerickaTastatura(int a, DinString b, int c){
-        brojPritisakaBrojeva = a;
-        proizvodjac = b;
-        brojTastera = c;
+    Autic(DinString n, DinString og, bool s)
+    {
+        Naziv = n;
+        OpsegGodina = og;
+        NaStruju = s;
     }
-    NumerickaTastatura(const NumerickaTastatura &n){
-        brojPritisakaBrojeva = n.brojPritisakaBrojeva;
-        proizvodjac = n.proizvodjac;
-        brojTastera = n.brojTastera;
+    void ispisi()
+    {
+        cout << "Autic:" << endl;
+        cout << "Naziv: " << Naziv << endl;
+        cout << "Na struju: ";
+        if(NaStruju)
+            cout << "Jeste" << endl;
+        else
+            cout << "Nije" << endl;
+        cout << "Opseg godina: " << OpsegGodina << endl;
     }
-    ~NumerickaTastatura(){}
+};
 
-    void ispis(){
-        Tastatura :: ispis();
-        cout << brojPritisakaBrojeva << endl;
+class Igraonica
+{
+private:
+    List <Igracka*> igracka;
+public:
+    bool dodajIgracku(Igracka* i)
+    {
+        if(igracka.add(igracka.size() + 1, i))
+            return true;
+        else
+            return false;
     }
-    void pritisniTaster(bool pritisnutiBroj){
-        if(pritisnutiBroj)
-            brojPritisakaBrojeva += 1;
+    bool baciIgracku(int j)
+    {
+        if(igracka.remove(j))
+            return true;
+        else
+            return false;
     }
-    void drziTaster(int sec, bool pritisnutiBroj){
-        if(pritisnutiBroj)
-            brojPritisakaBrojeva += sec;
+    bool nadjiIgracku(DinString n)
+    {
+        bool Postojanje = false;
+        Igracka* i;
+        for(int j = 1; j <= igracka.size(); ++j)
+        {
+            igracka.read(j, i);
+            if(i -> getNaziv() == n)
+                Postojanje = true;
+        }
+        return Postojanje;
+    }
+    void ispisiIgracke()
+    {
+        cout<<"Igraonica:"<<endl;
+        cout  << "Broj igracaka: " << igracka.size() << endl;
+        Igracka* i;
+        for(int j = 1; j <= igracka.size(); ++j)
+        {
+            igracka.read(j, i);
+            i -> ispisi();
+        }
     }
 };
 
 int main()
 {
-    GejmerskaTastatura g1;
-    GejmerskaTastatura g2(0, "Razer", 101);
-    GejmerskaTastatura g3(g1);
-
-    g1.ispis();
-    g2.ispis();
-    g3.ispis();
-
-    g1.drziTaster(30);
-    g2.pritisniTaster();
-
-    g1.ispis();
-    g2.ispis();
-
-    NumerickaTastatura n1;
-    NumerickaTastatura n2(700, "LG", 17);
-    NumerickaTastatura n3(n1);
-
-    n1.ispis();
-    n2.ispis();
-    n3.ispis();
-
-    n1.drziTaster(3,true);
-    n2.pritisniTaster(false);
-
-    n1.ispis();
-    n2.ispis();
-
-    n1.pritisniTaster(false);
-    n2.drziTaster(5,true);
-
-    n1.ispis();
-    n2.ispis();
-
-    n1.drziTaster(8,true);
-    n2.pritisniTaster(false);
-
-    n1.ispis();
-    n2.ispis();
+    PlisanaIgracka p1;
+    PlisanaIgracka p2("Mihajlo", "2 - 5", Kuca);
+    Autic a1;
+    Autic a2("Audi","4 - 15",true);
+    Igracka *i1 = &p1;
+    Igracka *i2 = &p2;
+    Igracka *i3 = &a1;
+    Igracka *i4 = &a2;
+    i1 -> ispisi();
+    i2 -> ispisi();
+    i3 -> ispisi();
+    i4 -> ispisi();
+    Igraonica igraonica;
+    igraonica.dodajIgracku(i1);
+    igraonica.ispisiIgracke();
+    igraonica.dodajIgracku(i2);
+    igraonica.dodajIgracku(i3);
+    igraonica.ispisiIgracke();
+    igraonica.baciIgracku(2);
+    igraonica.dodajIgracku(i4);
+    igraonica.ispisiIgracke();
 
     return 0;
 }

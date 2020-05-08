@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1588960568 source:c:\users\lukad\desktop\code\code blocks\hellokity\dinstring.cpp
+	"dinstring.hpp"
+
+1588960568 c:\users\lukad\desktop\code\code blocks\hellokity\dinstring.hpp
+	<iostream>
+
+1588961748 source:c:\users\lukad\desktop\code\code blocks\hellokity\main.cpp
+	<iostream>
+	"dinstring.hpp"
+	"list.hpp"
+
+1588960613 c:\users\lukad\desktop\code\code blocks\hellokity\list.hpp
+	<stdlib.h>
+	<iostream>
+
