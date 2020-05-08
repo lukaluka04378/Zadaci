@@ -3,154 +3,190 @@
 #include "dinstring.hpp"
 #include "list.hpp"
 
-enum Vrsta {Medo, Zeko, Kuca, Maca};
-
 using namespace std;
 
-class Igracka
+class Karta
 {
 protected:
-    DinString Naziv;
-    DinString OpsegGodina;
+    DinString mestoPolaska;
+    DinString mestoDolaska;
+    float duzina;
+    float cena;
+    int id;
 public:
-    virtual void ispisi() = 0;
-    DinString getNaziv() const
+    Karta()
     {
-        return Naziv;
+        mestoPolaska = "Beograd";
+        mestoDolaska = "Berlin";
+        duzina = 1200;
+        cena = 21000;
+        id = 22;
+    }
+    Karta(DinString a, DinString b, float c, float d, int e)
+    {
+        mestoPolaska = a;
+        mestoDolaska = b;
+        duzina = c;
+        cena = d;
+        id = e;
+    }
+    virtual bool jeftinaKarta() = 0;
+    DinString getMestoPolaska()const
+    {
+        return mestoPolaska;
+    }
+    DinString getMestoDolaska()const
+    {
+        return mestoDolaska;
+    }
+    float getDuzina()const
+    {
+        return duzina;
+    }
+    float getCena()const
+    {
+        return cena;
+    }
+    int getId()const
+    {
+        return id;
     }
 };
 
-class PlisanaIgracka : public Igracka
+class avionskaKarta : public Karta
 {
-private:
-    Vrsta vrsta;
 public:
-    PlisanaIgracka()
+    avionskaKarta() : Karta(){}
+    avionskaKarta(DinString a, DinString b, float c, float d, int e) : Karta(a,b,c,d,e){}
+    bool jeftinaKarta()
     {
-        vrsta = Maca;
-        Naziv = "Hello Kitty";
-        OpsegGodina = "2 - 7";
-    }
-    PlisanaIgracka(DinString n, DinString og, Vrsta v)
-    {
-        vrsta = v;
-        Naziv = n;
-        OpsegGodina = og;
-    }
-    void ispisi()
-    {
-        cout << "Plisana igracka:" << endl;
-        cout  << "Naziv: " << Naziv << endl;
-        cout <<"Vrsta: ";
-        if(vrsta == Medo)
-            cout << "Medo" << endl;
-        else if(vrsta == Maca)
-            cout << "Maca" << endl;
-        else if(vrsta == Zeko)
-            cout << "Zeko" << endl;
-        else
-            cout << "Kuca" << endl;
-        cout << "Opseg godina: " << OpsegGodina << endl;
-    }
-};
-
-class Autic : public Igracka
-{
-private:
-    bool NaStruju;
-public:
-    Autic()
-    {
-        Naziv = "Hot Wheels";
-        OpsegGodina = "3 - 8";
-        NaStruju = false;
-    }
-    Autic(DinString n, DinString og, bool s)
-    {
-        Naziv = n;
-        OpsegGodina = og;
-        NaStruju = s;
-    }
-    void ispisi()
-    {
-        cout << "Autic:" << endl;
-        cout << "Naziv: " << Naziv << endl;
-        cout << "Na struju: ";
-        if(NaStruju)
-            cout << "Jeste" << endl;
-        else
-            cout << "Nije" << endl;
-        cout << "Opseg godina: " << OpsegGodina << endl;
-    }
-};
-
-class Igraonica
-{
-private:
-    List <Igracka*> igracka;
-public:
-    bool dodajIgracku(Igracka* i)
-    {
-        if(igracka.add(igracka.size() + 1, i))
+        if(cena / duzina < 1)
             return true;
         else
             return false;
     }
-    bool baciIgracku(int j)
+    void ispisi()
     {
-        if(igracka.remove(j))
-            return true;
-        else
-            return false;
+        cout<<"Mesto polaska: "<<mestoPolaska<<endl
+        <<"Mesto dolaska: "<<mestoDolaska<<endl
+        <<"Duzina: "<<duzina<<endl
+        <<"Cena: "<<cena<<endl
+        <<"Identifikacioni broj: "<<id<<endl;
     }
-    bool nadjiIgracku(DinString n)
+};
+
+class Putovanje
+{
+private:
+    DinString naziv;
+    int maksCena;
+    List <avionskaKarta> karte;
+public:
+    Putovanje()
     {
-        bool Postojanje = false;
-        Igracka* i;
-        for(int j = 1; j <= igracka.size(); ++j)
+        naziv = "Idemo daleko";
+        maksCena = 50000;
+    }
+    Putovanje(DinString a, int b)
+    {
+        naziv = a;
+        maksCena = b;
+    }
+    DinString getNaziv()const
+    {
+        return naziv;
+    }
+    int getMaksCena()const
+    {
+        return maksCena;
+    }
+    bool dodajKartu(const avionskaKarta& a)
+    {
+        avionskaKarta poslednjaKarta;
+        karte.read(karte.size(),poslednjaKarta);
+        bool postoji = true;
+        if(karte.size()==0)
+            karte.add(1,a);
+        else if(a.getMestoPolaska() == poslednjaKarta.getMestoDolaska() && a.getCena() <= maksCena)
         {
-            igracka.read(j, i);
-            if(i -> getNaziv() == n)
-                Postojanje = true;
+            for(int i = 1;i <= karte.size();++i)
+            {
+                karte.read(i,poslednjaKarta);
+                if(poslednjaKarta.getId()==a.getId())
+                    postoji = false;
+            }
+            if(postoji)
+                karte.add(karte.size()+1,a);
         }
-        return Postojanje;
+        else
+            postoji = false;
+        return postoji;
     }
-    void ispisiIgracke()
+    bool izbaciKartu(int iden)
     {
-        cout<<"Igraonica:"<<endl;
-        cout  << "Broj igracaka: " << igracka.size() << endl;
-        Igracka* i;
-        for(int j = 1; j <= igracka.size(); ++j)
+        avionskaKarta karta;
+        for(int i = 1;i < karte.size();++i)
         {
-            igracka.read(j, i);
-            i -> ispisi();
+            karte.read(i,karta);
+            if(karta.getId() == iden)
+            {
+                karte.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+    void ispisi()
+    {
+        cout<<"Naziv: "<<naziv<<endl
+        <<"Maksimalna cena: "<<maksCena<<endl
+        <<"Broj karti: "<<karte.size()<<endl;
+        avionskaKarta karta;
+        for(int i = 1;i <= karte.size();++i)
+        {
+            karte.read(i,karta);
+            karta.ispisi();
+            if(karta.jeftinaKarta())
+                cout<<"Jeftina karta"<<endl;
+            else
+                cout<<"Nije jeftina karta"<<endl;
         }
     }
 };
 
 int main()
 {
-    PlisanaIgracka p1;
-    PlisanaIgracka p2("Mihajlo", "2 - 5", Kuca);
-    Autic a1;
-    Autic a2("Audi","4 - 15",true);
-    Igracka *i1 = &p1;
-    Igracka *i2 = &p2;
-    Igracka *i3 = &a1;
-    Igracka *i4 = &a2;
-    i1 -> ispisi();
-    i2 -> ispisi();
-    i3 -> ispisi();
-    i4 -> ispisi();
-    Igraonica igraonica;
-    igraonica.dodajIgracku(i1);
-    igraonica.ispisiIgracke();
-    igraonica.dodajIgracku(i2);
-    igraonica.dodajIgracku(i3);
-    igraonica.ispisiIgracke();
-    igraonica.baciIgracku(2);
-    igraonica.dodajIgracku(i4);
-    igraonica.ispisiIgracke();
-
+    avionskaKarta a1;
+    avionskaKarta a2("Berlin", "Beograd",1200,25000,23);
+    cout<<a1.getMestoPolaska()<<endl;
+    cout<<a1.getMestoDolaska()<<endl;
+    cout<<a1.getDuzina()<<endl;
+    cout<<a1.getCena()<<endl;
+    cout<<a1.getId()<<endl;
+    a1.ispisi();
+    cout<<a2.getMestoPolaska()<<endl;
+    cout<<a2.getMestoDolaska()<<endl;
+    cout<<a2.getDuzina()<<endl;
+    cout<<a2.getCena()<<endl;
+    cout<<a2.getId()<<endl;
+    a2.ispisi();
+    avionskaKarta a3("Beograd","Moskva",2000,30000,42);
+    Putovanje p1;
+    p1.ispisi();
+    p1.dodajKartu(a1);
+    p1.ispisi();
+    p1.dodajKartu(a2);
+    p1.ispisi();
+    p1.dodajKartu(a3);
+    p1.ispisi();
+    Putovanje p2("Cim se zavrsi karantin iddem negde",100000);
+    avionskaKarta a4("Moskva","Beograd",20000,35000,43);
+    p2.dodajKartu(a2);
+    p2.dodajKartu(a4);
+    p2.ispisi();
+    p2.izbaciKartu(105);
+    p2.ispisi();
+    cout<<p2.getNaziv()<<endl;
+    cout<<p2.getMaksCena();
     return 0;
 }

@@ -114,8 +114,6 @@ DinString operator+(const DinString& ds1, const DinString& ds2){
 
 }
 
-
-
 ostream& operator<<(ostream& out, const DinString& ds) {
     if(ds.duzina > 0)
         out << ds.text;

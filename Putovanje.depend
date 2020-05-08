@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1588962242 source:c:\users\lukad\desktop\code\code blocks\putovanje\dinstring.cpp
+	"dinstring.hpp"
+
+1588962241 c:\users\lukad\desktop\code\code blocks\putovanje\dinstring.hpp
+	<iostream>
+
+1588963890 source:c:\users\lukad\desktop\code\code blocks\putovanje\main.cpp
+	<iostream>
+	"dinstring.hpp"
+	"list.hpp"
+
+1588962241 c:\users\lukad\desktop\code\code blocks\putovanje\list.hpp
+	<stdlib.h>
+	<iostream>
+
